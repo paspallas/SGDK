@@ -164,6 +164,9 @@ a.button span {
 #paypal span {
   background: transparent url(../images/paypal-icon.png) 12px 50% no-repeat;
 }
+#heart span {
+  background: transparent url(../images/heart-icon.png) 12px 50% no-repeat;
+}
 #view-on-github {
   margin-right: 0;
 }
