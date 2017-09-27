@@ -1,0 +1,49 @@
+.SILENT:
+
+BIN      := $(GDK)/bin
+LIB      := $(GDK)/lib
+X68K     := $(GDK)/x68k/bin
+LIBDIR   := $(GDK)/x68k/m68k-elf/lib
+PREFIX   := m68k-elf-
+
+CC       := $(X68K)/$(PREFIX)gcc
+CXX      := $(X68K)/$(PREFIX)g++
+LD       := $(X68K)/$(PREFIX)ld
+NM       := $(X68K)/$(PREFIX)nm
+AR       := $(X68K)/$(PREFIX)ar
+OBJCPY   := $(X68K)/$(PREFIX)objcopy
+LIBGCC   := -L$(LIBDIR) -lstdc++ -lc -lm -lgcc
+
+SHELL    := $(BIN)/sh
+RM       := $(BIN)/rm
+CP       := $(BIN)/cp
+ASMZ80   := $(BIN)/sjasm
+MACCER   := $(BIN)/mac68k
+SIZEBND  := $(BIN)/sizebnd
+BINTOS   := $(BIN)/bintos
+RESCOMP  := $(BIN)/rescomp
+MKDIR    := $(BIN)/mkdir
+ECHO     := echo
+
+# lib src
+SRC_LIB     := $(GDK)/src
+RES_LIB     := $(GDK)/res
+INCLUDE_LIB := $(GDK)/inc
+
+###################################
+
+FLAGSZ80_LIB := -i$(SRC_LIB) -i$(INCLUDE_LIB)
+
+NOLTO     := -fno-use-linker-plugin
+DEPEND    := -MD -MP
+MOTOROLA  := -m68000 -mstrict-align -mtune=68000 -ffunction-sections -fdata-sections -ffreestanding -B$(X68K)
+WARNS     := -Wall -Wstack-usage=2048 -fdiagnostics-color=always
+COPT      := -std=gnu11
+CXXOPT    := -std=gnu++14 -fno-rtti -fno-exceptions -fno-non-call-exceptions -fno-use-cxa-atexit -fno-common
+OPT       := -Ofast -funroll-loops -funswitch-loops -ffast-math -fno-unit-at-a-time -fomit-frame-pointer -fno-gcse -fno-web \
+			 -finline-small-functions -findirect-inlining -fno-dse -fno-tree-dse
+
+DEFAULT   := $(MOTOROLA) $(WARNS) $(DEPEND) 
+
+CFLAGS    := $(DEFAULT) $(COPT)
+CXXFLAGS  := $(DEFAULT) $(CXXOPT)

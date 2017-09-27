@@ -1,6 +1,9 @@
 #ifndef _GENESIS_H_
 #define _GENESIS_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "config.h"
 #include "asm.h"
@@ -42,6 +45,9 @@
 #include "joy.h"
 #include "timer.h"
 
+#ifdef __cplusplus
+}
+#endif
 
 #define SGDK_VERSION    1.32
 

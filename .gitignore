@@ -17,3 +17,4 @@ out.lst
 obj/*
 src/z80_*.s
 res/libres.s
+*.sh

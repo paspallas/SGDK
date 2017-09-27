@@ -14,7 +14,7 @@ typedef struct
 
 // forward
 static void initPixels(Pixel *pixels, u16 num);
-static void initLines(Line *lines, u16 num, u16 clipped);
+static void initLines(Line *lines, u16 num);
 static void initPolys(Vect2D_s16 *pts, Polygone *polys, u16 numPts, u16 num);
 
 static u16 displayResult(u32 op, fix32 time, u16 y);
@@ -84,7 +84,7 @@ u16 executeBMPTest(u16 *scores)
     *score = displayResult(1000, end - start, 3);
     globalScore += *score++;
 
-    VDP_drawText("Pixel draw safe (with clipping)", 2, 8);
+    VDP_drawText("Pixel draw simple", 2, 8);
     waitMs(4000);
     VDP_clearPlan(PLAN_A, TRUE);
 
@@ -126,191 +126,60 @@ u16 executeBMPTest(u16 *scores)
             j -= 10;
         }
         end = getTimeAsFix32(FALSE);
-        time += end - start;
 
-        BMP_flip(FALSE);
+        BMP_flip(TRUE);
+
+        time += end - start;
     }
     BMP_end();
 
     VDP_clearPlan(PLAN_A, TRUE);
-    VDP_drawText("Pixel draw safe (with clipping)", 2, 1);
+    VDP_drawText("Pixel draw simple", 2, 1);
     *score = displayResult2(150 * 600, time, 3);
     globalScore += *score++;
 
-    VDP_drawText("Pixel draw fast (without clipping)", 2, 8);
+    VDP_drawText("Pixel draw array", 2, 8);
     waitMs(4000);
     VDP_clearPlan(PLAN_A, TRUE);
 
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
-    BMP_setBufferCopy(TRUE);
     time = FIX32(0);
     i = 150;
+    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
+    BMP_setBufferCopy(TRUE);
+    start = getTimeAsFix32(FALSE);
     while(i--)
     {
-        Pixel *pix = pixels;
-        u16 j = 600;
-
-        initPixels(pixels, 600);
+        initPixels(pixels, 750);
 
         start = getTimeAsFix32(FALSE);
-        while(j)
-        {
-            BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
-            pix++;
-            BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
-            pix++;
-            BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
-            pix++;
-            BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
-            pix++;
-            BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
-            pix++;
-            BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
-            pix++;
-            BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
-            pix++;
-            BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
-            pix++;
-            BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
-            pix++;
-            BMP_setPixelFast(pix->pt.x, pix->pt.y, pix->col);
-            pix++;
-
-            j -= 10;
-        }
+        BMP_setPixels(pixels, 750);
         end = getTimeAsFix32(FALSE);
-        time += end - start;
 
-        BMP_flip(FALSE);
+        BMP_flip(TRUE);
+
+        time += end - start;
     }
     BMP_end();
 
     VDP_clearPlan(PLAN_A, TRUE);
-    VDP_drawText("Pixel draw fast (without clipping)", 2, 1);
-    *score = displayResult2(150 * 600, time, 3);
+    VDP_drawText("Pixel draw array", 2, 1);
+    *score = displayResult2(150 * 750, time, 3);
     globalScore += *score++;
 
-    VDP_drawText("Pixel draw array safe (with clip.)", 2, 8);
+    VDP_drawText("Line draw", 2, 8);
     waitMs(4000);
     VDP_clearPlan(PLAN_A, TRUE);
 
     BMP_init(TRUE, PLAN_A, PAL1, FALSE);
     BMP_setBufferCopy(TRUE);
     time = FIX32(0);
-    i = 150;
-    while(i--)
-    {
-        initPixels(pixels, 600);
-
-        start = getTimeAsFix32(FALSE);
-        BMP_setPixels(pixels, 600);
-        end = getTimeAsFix32(FALSE);
-        time += end - start;
-
-        BMP_flip(FALSE);
-    }
-    BMP_end();
-
-    VDP_clearPlan(PLAN_A, TRUE);
-    VDP_drawText("Pixel draw array safe (with clip.)", 2, 1);
-    *score = displayResult2(150 * 600, time, 3);
-    globalScore += *score++;
-
-    VDP_drawText("Pixel draw array fast (without clip.)", 2, 8);
-    waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
-
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
-    BMP_setBufferCopy(TRUE);
-    time = FIX32(0);
-    i = 150;
-    while(i--)
-    {
-        initPixels(pixels, 600);
-
-        start = getTimeAsFix32(FALSE);
-        BMP_setPixelsFast(pixels, 600);
-        end = getTimeAsFix32(FALSE);
-        time += end - start;
-
-        BMP_flip(FALSE);
-    }
-    BMP_end();
-
-    VDP_clearPlan(PLAN_A, TRUE);
-    VDP_drawText("Pixel draw array fast (without clip.)", 2, 1);
-    *score = displayResult2(150 * 600, time, 3);
-    globalScore += *score++;
-
-
-    VDP_drawText("Line draw safe (with clipping)", 2, 8);
-    waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
-
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
-    BMP_setBufferCopy(TRUE);
-    time = FIX32(0);
-    i = 60;
+    i = 100;
     while(i--)
     {
         Line *lin = lines;
-        u16 j = 80;
+        u16 j = 130;
 
-        initLines(lines, 80, FALSE);
-
-        start = getTimeAsFix32(FALSE);
-        while(j)
-        {
-            if (BMP_clipLine(lin)) BMP_drawLine(lin);
-            lin++;
-            if (BMP_clipLine(lin)) BMP_drawLine(lin);
-            lin++;
-            if (BMP_clipLine(lin)) BMP_drawLine(lin);
-            lin++;
-            if (BMP_clipLine(lin)) BMP_drawLine(lin);
-            lin++;
-            if (BMP_clipLine(lin)) BMP_drawLine(lin);
-            lin++;
-            if (BMP_clipLine(lin)) BMP_drawLine(lin);
-            lin++;
-            if (BMP_clipLine(lin)) BMP_drawLine(lin);
-            lin++;
-            if (BMP_clipLine(lin)) BMP_drawLine(lin);
-            lin++;
-            if (BMP_clipLine(lin)) BMP_drawLine(lin);
-            lin++;
-            if (BMP_clipLine(lin)) BMP_drawLine(lin);
-            lin++;
-
-            j -= 10;
-        }
-        end = getTimeAsFix32(FALSE);
-        time += end - start;
-
-        BMP_flip(FALSE);
-    }
-    BMP_end();
-
-    VDP_clearPlan(PLAN_A, TRUE);
-    VDP_drawText("Line draw safe (with clipping)", 2, 1);
-    *score = displayResult3(60 * 80, time, 3);
-    globalScore += *score++;
-
-
-    VDP_drawText("Line draw fast (without clip.)", 2, 8);
-    waitMs(4000);
-    VDP_clearPlan(PLAN_A, TRUE);
-
-    BMP_init(TRUE, PLAN_A, PAL1, FALSE);
-    BMP_setBufferCopy(TRUE);
-    time = FIX32(0);
-    i = 60;
-    while(i--)
-    {
-        Line *lin = lines;
-        u16 j = 80;
-
-        initLines(lines, 80, TRUE);
+        initLines(lines, 130);
 
         start = getTimeAsFix32(FALSE);
         while(j)
@@ -329,17 +198,17 @@ u16 executeBMPTest(u16 *scores)
             j -= 10;
         }
         end = getTimeAsFix32(FALSE);
+
         time += end - start;
 
-        BMP_flip(FALSE);
+        BMP_flip(TRUE);
     }
     BMP_end();
 
     VDP_clearPlan(PLAN_A, TRUE);
-    VDP_drawText("Line draw fast (without clip.)", 2, 1);
-    *score = displayResult3(60 * 80, time, 3);
+    VDP_drawText("Line draw", 2, 1);
+    *score = displayResult3(100 * 130, time, 3);
     globalScore += *score++;
-
 
     VDP_drawText("Polygon draw", 2, 8);
     waitMs(4000);
@@ -363,9 +232,10 @@ u16 executeBMPTest(u16 *scores)
             pol++;
         }
         end = getTimeAsFix32(FALSE);
+
         time += end - start;
 
-        BMP_flip(FALSE);
+        BMP_flip(TRUE);
     }
     BMP_end();
 
@@ -404,9 +274,10 @@ u16 executeBMPTest(u16 *scores)
             pos++;
         }
         end = getTimeAsFix32(FALSE);
+
         time += end - start;
 
-        BMP_flip(FALSE);
+        BMP_flip(TRUE);
     }
     BMP_end();
 
@@ -445,9 +316,10 @@ u16 executeBMPTest(u16 *scores)
             pos++;
         }
         end = getTimeAsFix32(FALSE);
+
         time += end - start;
 
-        BMP_flip(FALSE);
+        BMP_flip(TRUE);
     }
     BMP_end();
 
@@ -488,9 +360,10 @@ u16 executeBMPTest(u16 *scores)
             pos++;
         }
         end = getTimeAsFix32(FALSE);
+
         time += end - start;
 
-        BMP_flip(FALSE);
+        BMP_flip(TRUE);
     }
     BMP_end();
     MEM_free(bmp);
@@ -530,9 +403,10 @@ u16 executeBMPTest(u16 *scores)
             pos++;
         }
         end = getTimeAsFix32(FALSE);
+
         time += end - start;
 
-        BMP_flip(FALSE);
+        BMP_flip(TRUE);
     }
     BMP_end();
 
@@ -571,9 +445,10 @@ u16 executeBMPTest(u16 *scores)
             pos++;
         }
         end = getTimeAsFix32(FALSE);
+
         time += end - start;
 
-        BMP_flip(FALSE);
+        BMP_flip(TRUE);
     }
     BMP_end();
 
@@ -614,9 +489,10 @@ u16 executeBMPTest(u16 *scores)
             pos++;
         }
         end = getTimeAsFix32(FALSE);
+
         time += end - start;
 
-        BMP_flip(FALSE);
+        BMP_flip(TRUE);
     }
     BMP_end();
     MEM_free(bmp);
@@ -648,7 +524,7 @@ u16 executeBMPTest(u16 *scores)
             time += end - start;
             j += j >> 5;
             BMP_showFPS(FALSE);
-            BMP_flip(FALSE);
+            BMP_flip(TRUE);
         }
         for(j = 127; j >= 32; j--)
         {
@@ -658,7 +534,7 @@ u16 executeBMPTest(u16 *scores)
             time += end - start;
             j -= j >> 5;
             BMP_showFPS(FALSE);
-            BMP_flip(FALSE);
+            BMP_flip(TRUE);
         }
     }
     BMP_end();
@@ -690,15 +566,16 @@ static void initPixels(Pixel *pixels, u16 num)
     {
         const u16 r = random();
 
-        p->pt.x = (r >> 8) & 0xFF;
-        p->pt.y = (r & 0x7F) + ((r >> 4) & 0x1F);
+        p->pt.x = r >> 8;
+        // allow to handle clip
+        p->pt.y = (r & 0xFF) - 64;
         p->col = random() & 0xF;
         p->col |= p->col << 4;
         p++;
     }
 }
 
-static void initLines(Line *lines, u16 num, u16 clipped)
+static void initLines(Line *lines, u16 num)
 {
     u16 i = num;
     Line *l = lines;
@@ -709,11 +586,11 @@ static void initLines(Line *lines, u16 num, u16 clipped)
         const u16 r2 = random();
 
         l->pt1.x = r1 >> 8;
-        if (clipped) l->pt1.y = (r1 & 0x7F) + ((r1 >> 4) & 0x1F);
-        else l->pt1.y = (r1 & 0xFF) - 64;
+        // allow to handle clip
+        l->pt1.y = (r1 & 0xFF) - 64;
         l->pt2.x = r2 >> 8;
-        if (clipped) l->pt2.y = (r2 & 0x7F) + ((r2 >> 4) & 0x1F);
-        else l->pt2.y = (r2 & 0xFF) - 64;
+        // allow to handle clip
+        l->pt2.y = (r2 & 0xFF) - 64;
         l->col = random() & 0xF;
         l->col |= l->col << 4;
         l++;
